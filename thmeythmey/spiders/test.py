@@ -44,6 +44,7 @@ class TestSpider(CrawlSpider):
                 a[1]/div[1]/@data-src
                 """)
 
+            item['imageUrl'] = ''
             if not imageUrl:
                 print('ThmeyThmey => [' + now + '] No imageUrl')
             else:
