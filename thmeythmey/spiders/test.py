@@ -55,10 +55,10 @@ class TestSpider(CrawlSpider):
             else:
                 item['imageUrl'] = imageUrl.extract_first()
 
-            if item['url'] == 'https://thmeythmey.com/?page=detail&ctype=article&id=45659&lg=kh':
-                request = scrapy.Request(item['url'], callback=self.parse_detail)
-                request.meta['item'] = item
-                yield request
+            # if item['url'] == 'https://thmeythmey.com/?page=detail&ctype=article&id=45659&lg=kh':
+            request = scrapy.Request(item['url'], callback=self.parse_detail)
+            request.meta['item'] = item
+            return request
 
     def parse_detail(self, response):
         item = response.meta['item']
@@ -87,7 +87,6 @@ class TestSpider(CrawlSpider):
             minified_html = minify(clean_html)
             htmlcontent += minified_html.replace('\n', ' ').replace('\r', '').replace('%0A', '').replace('%0D', '').replace('<p> </p>', '')
 
-        print htmlcontent
         item['htmlcontent'] = htmlcontent
 
         yield item
