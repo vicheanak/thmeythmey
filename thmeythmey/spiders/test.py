@@ -8,6 +8,7 @@ import lxml.etree
 import lxml.html
 from lxml.html import builder as E
 from stripogram import html2text, html2safehtml
+from htmlmin import minify
 
 class TestSpider(CrawlSpider):
     name = "thmeythmey"
@@ -46,20 +47,18 @@ class TestSpider(CrawlSpider):
             imageUrl = article.xpath("""
                 a[1]/div[1]/@data-src
                 """)
-<<<<<<< Updated upstream
 
             item['imageUrl'] = ''
-=======
->>>>>>> Stashed changes
+
             if not imageUrl:
                 print('ThmeyThmey => [' + now + '] No imageUrl')
             else:
                 item['imageUrl'] = imageUrl.extract_first()
 
-            # if item['url'] == 'https://thmeythmey.com/?page=detail&ctype=article&id=45659&lg=kh':
-            request = scrapy.Request(item['url'], callback=self.parse_detail)
-            request.meta['item'] = item
-            yield request
+            if item['url'] == 'https://thmeythmey.com/?page=detail&ctype=article&id=45659&lg=kh':
+                request = scrapy.Request(item['url'], callback=self.parse_detail)
+                request.meta['item'] = item
+                yield request
 
     def parse_detail(self, response):
         item = response.meta['item']
@@ -82,11 +81,13 @@ class TestSpider(CrawlSpider):
             wrap_p = lxml.html.fragment_fromstring(c, create_parent='p')
 
             wrap_p_string = lxml.html.tostring(wrap_p, encoding=unicode)
-            clean_html = html2safehtml(wrap_p_string,valid_tags=("p", "img", "div"))
-            htmlcontent += clean_html.replace('\n', ' ').replace('\r', '').replace('%0A', '').replace('%0D', '').replace('<p> </p>', '').replace('<p></p>', '')
+
+            clean_html = html2safehtml(wrap_p_string,valid_tags=("p", "img"))
+
+            minified_html = minify(clean_html)
+            htmlcontent += minified_html.replace('\n', ' ').replace('\r', '').replace('%0A', '').replace('%0D', '').replace('<p> </p>', '')
 
         print htmlcontent
-
         item['htmlcontent'] = htmlcontent
 
         yield item
