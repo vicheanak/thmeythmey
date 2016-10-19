@@ -58,7 +58,7 @@ class TestSpider(CrawlSpider):
             # if item['url'] == 'https://thmeythmey.com/?page=detail&ctype=article&id=45659&lg=kh':
             request = scrapy.Request(item['url'], callback=self.parse_detail)
             request.meta['item'] = item
-            return request
+            yield request
 
     def parse_detail(self, response):
         item = response.meta['item']
